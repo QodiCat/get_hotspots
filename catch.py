@@ -15,14 +15,15 @@ class Catch:
         self.html = get_html(self.url)
         self.data = get_data(self.html)
         self.now=time.strftime('%Y-%m-%d %H时%M分',time.localtime(time.time()))
-        self.file_path = f"data/{self.now}.xlsx"
+        self.file_path = f"data/{self.now}.csv"
         if os.path.exists(self.file_path):
-            self.res = pd.read_excel(self.file_path, engine='openpyxl')
+            self.res = pd.read_csv(self.file_path)
         else:
             self.res = pd.DataFrame(columns=['content', 'url', 'source', 'catch_time'])
+
     def save_data(self):
-        self.res = get_node_data(self.res, self.data,self.sources_data,self.now)
-        self.res.to_excel(self.file_path, engine='openpyxl', index=False)
+        self.res = get_node_data(self.res, self.data, self.sources_data, self.now)
+        self.res.to_csv(self.file_path, index=True)
         
 
 
