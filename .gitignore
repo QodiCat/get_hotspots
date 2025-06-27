@@ -1,0 +1,12 @@
+logs/
+output/
+theme_input/
+utils/
+
+# 屏蔽所有.log文件
+*.log
+
+# 屏蔽特定目录下的.log文件
+**/*.log
+
+
