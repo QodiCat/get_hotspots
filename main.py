@@ -1,4 +1,4 @@
-from utils import read_yaml
+from utils.utils import read_yaml
 from catch import Catch
 
 
