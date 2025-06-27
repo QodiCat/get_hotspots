@@ -23,7 +23,7 @@ class Catch:
 
     def save_data(self):
         self.res = get_node_data(self.res, self.data, self.sources_data, self.now)
-        self.res.to_csv(self.file_path, index=True)
+        
         
 
 
@@ -43,26 +43,46 @@ def get_data(html):
     return nodes
 
 def get_node_data(df, nodes,sources_data,now):
-     for node in nodes:
-         source = node.find('div', class_='cc-cd-lb').text.strip()
-         messages = node.find('div', class_='cc-cd-cb-l nano-content').find_all('a')
-         for message in messages:
-            if source in sources_data:
-                content = message.find('span', class_='t').text.strip() 
-                
-                data = {
-                        'content': [content],
-                        'url': [message['href']],
-                        'source': [source],
-                        'catch_time': [now],
-   
-                    }
+    if not os.path.exists(f"data/{now}"):
+        os.makedirs(f"data/{now}")
+    for node in nodes:
+        datas=[]
+        #df清空所有行
+        df=df.drop(df.index)
+        source = node.find('div', class_='cc-cd-lb').text.strip()
+        messages = node.find('div', class_='cc-cd-cb-l nano-content')
+        if source not in sources_data: 
+            continue
+        else:
+            #移除sources_data中source，避免微博重复问题
+            sources_data.remove(source)
+            print(f"移除{source}数据")
+        if messages:
+            messages=messages.find_all('a')
+        else:
+            continue
+        
+        for message in messages:
+            content = message.find('span', class_='t').text.strip() 
+            
+            data = {
+                    'content': [content],
+                    'url': [message['href']],
+                    'source': [source],
+                    'catch_time': [now],
+
+                }
+            datas.append(data)
+        df=pd.DataFrame(datas)
+        
+        print(df)
+        #保存数据
+        df.to_csv(f"data/{now}/{source}.csv", index=True)
+    return df
     
-                item = pd.DataFrame(data)
-                df = pd.concat([df, item], ignore_index=True)
     
     
-     return df
+    
 
 
 
